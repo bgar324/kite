@@ -1,0 +1,5 @@
+/build/
+/.tools/
+/vendor/
+__pycache__/
+.DS_Store

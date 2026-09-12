@@ -1,0 +1,50 @@
+{
+  "product": "Kite",
+  "version": "0.2.0",
+  "scope": "RFC section 27 recommended MVP",
+  "status": "recommended-mvp-verified",
+  "ghostty": {"version": "1.3.1", "revision": "332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28", "zig": "0.15.2"},
+  "application": "build/Kite.app",
+  "build": "python3 build.py app",
+  "verify": "python3 verify.py",
+  "last_verification": "Complete verify.py pipeline passed; expanded current-version native hidden-tab scenario also passed via python3 verify-native.py --skip-build.",
+  "native_programs_verified": ["interactive shell", "Vim alternate-screen reconnect and primary-screen return", "Unicode/IME commit", "clipboard copy and paste"],
+  "measurements": {"added_transport_median_ms": 0.0431255, "snapshot_reconnect_and_command_ms": 1.885, "large_workspace_sessions": 64},
+  "hidden_tab_verification": {"output_lines": 20, "layer_presentations": 0, "whole_gui_cpu_seconds": 0.030627, "sample_seconds": 1.5, "retained_surface": true, "artifact": "build/native-verification/native-exercise.json"},
+  "runtime": {
+    "socket": "~/Library/Application Support/Kite/session-v2.sock",
+    "workspace": "~/Library/Application Support/Kite/workspace.json",
+    "startup": "Opening Kite starts its independent session daemon automatically.",
+    "quit": "Window close and application quit detach; explicit session/pane close terminates owned processes.",
+    "legacy_session": "Existing experimental v1 daemon was left untouched. build/kite-session-v1-recovery can attach to its session.sock; it is not used by the new app."
+  },
+  "requirements": {
+    "one_native_window": "implemented and exercised",
+    "vertical_session_sidebar": "implemented and exercised",
+    "ghostty_terminal_surfaces": "implemented and rendered",
+    "new_close_rename_reorder": "implemented and exercised",
+    "daemon_owned_ptys": "verified with real shell processes",
+    "gui_detach_reconnect": "verified with preserved shell PID and reconstructed contents",
+    "bounded_recent_replay": "2 MiB canonical Ghostty scrollback per pane; safe VT snapshots capped at 16 MiB",
+    "cwd_title_metadata": "verified against real chdir and OSC title output",
+    "horizontal_vertical_splits": "nested splits, divider persistence, focus and pane movement exercised",
+    "keyboard_navigation": "character events, indexed session selection, pane focus and configurable shortcuts exercised",
+    "basic_settings": "font family/size, shell, theme and shortcuts persisted and applied"
+  },
+  "evidence": {
+    "state_contracts": "Tests/TerminalState.c: primary/alternate state, safe replay, wide wraps, protected cells, REP, partial UTF-8 and CSI execution",
+    "framing_contracts": "Tests/ModelWire.swift: fragmentation, payload bounds, large control frames, split collapse",
+    "daemon": "build/mvp-smoke-result.json",
+    "stress": "build/stress-result.json",
+    "transport": "build/benchmark-result.json",
+    "native": "build/native-verification/native-exercise.json",
+    "native_relaunch": "build/native-verification/native-restore.json",
+    "native_window": "build/native-verification/native-window.png"
+  },
+  "limits": [
+    "Process persistence covers GUI restarts, not daemon death, logout or machine reboot. Lost processes are shown as exited with unknown/non-success status; restart is explicit.",
+    "Recent history is bounded. Kitty graphics/APC images are not reconstructed by the pinned Ghostty formatter.",
+    "Some uncommon VT bookkeeping states cannot be represented by the current safe snapshot codec and report a restoration error rather than silently corrupting output.",
+    "Transport latency measurements exclude native keyboard dispatch and GPU rendering."
+  ]
+}
